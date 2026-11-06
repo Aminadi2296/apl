@@ -1,5 +1,5 @@
 ---
-import { site } from '../data/site';
+import { site, flags } from '../data/site';
 import { t, routes, type Lang } from '../i18n/ui';
 const { lang, paths } = Astro.props as { lang: Lang; paths: { es: string; en: string } };
 const n = t(lang).nav;
@@ -13,9 +13,16 @@ const active = (p: string) => (p === '/' || p === '/en/' ? cur === p : cur.start
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
       <p class="hidden sm:block">{site.hours[lang]} · {site.address.street}, {site.address.city}</p>
       <a class="sm:hidden font-bold" href={`tel:${site.phoneHref}`}>{site.phone}</a>
-      <a href={paths[other]} hreflang={other} class="rounded border border-white/40 px-2 py-0.5 font-bold hover:bg-brand hover:text-navy">
-        {other.toUpperCase()}
-      </a>
+      <div class="flex items-center gap-4">
+        <ul class="hidden items-center gap-1.5 lg:flex" aria-label="Comunidad latina">
+          {flags.map(([code, name]) => (
+            <li><img src={`https://flagcdn.com/w40/${code}.png`} alt="" title={name} width="20" height="14" loading="lazy" class="h-3.5 w-5 rounded-[2px] object-cover" /></li>
+          ))}
+        </ul>
+        <a href={paths[other]} hreflang={other} class="rounded border border-white/40 px-2 py-0.5 font-bold hover:bg-brand hover:text-navy">
+          {other.toUpperCase()}
+        </a>
+      </div>
     </div>
   </div>
   <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3" aria-label="Main">
@@ -26,9 +33,9 @@ const active = (p: string) => (p === '/' || p === '/en/' ? cur === p : cur.start
       {links.slice(0, 2).map(([k, label]) => <li><a href={routes[k][lang]} class:list={['hover:text-brand', active(routes[k][lang]) && 'text-brand']}>{label}</a></li>)}
       <li class="group relative">
         <a href={routes.financing[lang]} class:list={['hover:text-brand', cur.includes('financ') && 'text-brand']}>{n.financing} ▾</a>
-        <ul class="invisible absolute left-0 top-full w-60 rounded-lg bg-white p-2 opacity-0 shadow-xl transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-          <li><a class="block rounded p-2 hover:bg-mist" href={routes.financing[lang]}>{n.summary}</a></li>
-          <li><a class="block rounded p-2 hover:bg-mist" href={routes.apply[lang]}>{n.apply}</a></li>
+        <ul class="invisible absolute left-0 top-full w-60 rounded-lg bg-white p-2 text-navy opacity-0 shadow-xl transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+          <li><a class="block rounded p-2 text-navy hover:bg-mist" href={routes.financing[lang]}>{n.summary}</a></li>
+          <li><a class="block rounded p-2 text-navy hover:bg-mist" href={routes.apply[lang]}>{n.apply}</a></li>
         </ul>
       </li>
       {links.slice(2).map(([k, label]) => <li><a href={routes[k][lang]} class:list={['hover:text-brand', active(routes[k][lang]) && 'text-brand']}>{label}</a></li>)}
