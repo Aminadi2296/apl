@@ -1,0 +1,7 @@
+---
+import View from '../../../views/CarDetail.astro';
+import cars from '../../../data/cars.json';
+export const getStaticPaths = () => cars.map((car) => ({ params: { slug: car.slug }, props: { car } }));
+const { car } = Astro.props;
+---
+<View lang="en" car={car} />

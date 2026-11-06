@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #FF5804;
+  --color-brand-dark: #D94A00;
+  --color-navy: #16232A;
+  --color-navy-soft: #22343e;
+  --color-mist: #F2F5F6;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-sans); color: var(--color-navy); }
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.02em; }
+:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; padding:.85rem 1.5rem; font-weight:700; border-radius:.6rem; transition:background .2s, color .2s; cursor:pointer; }
+.btn-primary { background: var(--color-brand); color: var(--color-navy); }
+.btn-primary:hover { background: var(--color-navy); color:#fff; }
+.btn-dark { background: var(--color-navy); color:#fff; }
+.btn-dark:hover { background: var(--color-brand); color: var(--color-navy); }
+.btn-ghost { border:2px solid currentColor; }
+.field { width:100%; border:1.5px solid #c9d2d6; border-radius:.5rem; padding:.7rem .85rem; background:#fff; }
+.field:focus { border-color: var(--color-brand); outline: none; box-shadow: 0 0 0 3px rgb(255 88 4 / .2); }
+
+@keyframes scroll-x { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee-track { display:flex; width:max-content; animation: scroll-x 40s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+.rotator span { position:absolute; left:0; top:0; opacity:0; transform: translateY(40%); transition: opacity .5s, transform .5s; white-space:nowrap; }
+.rotator span.on { opacity:1; transform:none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+  .rotator span { transition: none; }
+}

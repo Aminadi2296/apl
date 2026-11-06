@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { t, routes, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang), a = u.about;
+const [title, desc] = u.seo.about;
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('about')}>
+  <section class="bg-navy py-14 text-white"><div class="mx-auto max-w-4xl px-4"><h1 class="text-4xl font-extrabold md:text-5xl">{a.title}</h1><p class="mt-2 text-lg text-white/80">{a.sub}</p></div></section>
+  <section class="mx-auto max-w-4xl px-4 py-14">
+    {a.body.map((p) => <p class="mb-5 max-w-2xl text-lg leading-relaxed">{p}</p>)}
+    <div class="mt-10 grid gap-8 md:grid-cols-3">
+      {a.values.map(([h, p]) => <div class="border-t-4 border-brand pt-4"><h2 class="text-xl font-bold">{h}</h2><p class="mt-1 text-navy/75">{p}</p></div>)}
+    </div>
+    <a class="btn btn-primary mt-12" href={routes.apply[lang]}>{u.nav.cta}</a>
+  </section>
+</Layout>

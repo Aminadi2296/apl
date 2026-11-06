@@ -1,0 +1,27 @@
+---
+import { flags } from '../data/site';
+import { t, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang).flags;
+---
+<section class="bg-mist py-14">
+  <div class="mx-auto max-w-7xl px-4 text-center">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{u.title}</h2>
+    <p class="mt-2 text-navy/70">{u.sub}</p>
+  </div>
+  <div class="marquee mt-8 overflow-hidden">
+    <div class="marquee-track">
+      {[0, 1].map((n) => (
+        <ul class="flex shrink-0 gap-8 pr-8" aria-hidden={n === 1 ? 'true' : undefined}>
+          {flags.map(([code, name]) => (
+            <li class="flex w-28 flex-col items-center gap-2">
+              {/* Descargar las banderas a /public/flags/ antes de publicar para no depender de flagcdn */}
+              <img src={`https://flagcdn.com/w160/${code}.png`} alt={n === 0 ? name : ''} width="96" height="64" loading="lazy" class="h-16 w-24 rounded object-cover shadow" />
+              <span class="text-sm font-bold">{name}</span>
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  </div>
+</section>

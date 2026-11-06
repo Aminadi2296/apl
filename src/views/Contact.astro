@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../data/site';
+import { t, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang), c = u.contact, fm = u.form;
+const [title, desc] = u.seo.contact;
+const msg = JSON.stringify({ ok: fm.ok, test: fm.test, err: fm.err, sending: fm.sending });
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('contact')}>
+  <section class="bg-navy py-14 text-white"><div class="mx-auto max-w-5xl px-4"><h1 class="text-4xl font-extrabold md:text-5xl">{c.title}</h1><p class="mt-2 text-lg text-white/80">{c.sub}</p></div></section>
+  <section class="mx-auto grid max-w-5xl gap-10 px-4 py-14 md:grid-cols-2">
+    <div class="space-y-6">
+      <div><h2 class="font-bold text-brand-dark">{c.visit}</h2><p>{site.address.street}<br />{site.address.city}, {site.address.state} {site.address.zip}</p></div>
+      <div><h2 class="font-bold text-brand-dark">{c.call}</h2><a class="text-xl font-bold" href={`tel:${site.phoneHref}`}>{site.phone}</a></div>
+      <div><h2 class="font-bold text-brand-dark">{c.mail}</h2><a href={`mailto:${site.email}`}>{site.email}</a></div>
+      <div><h2 class="font-bold text-brand-dark">{c.hours}</h2><p>{site.hours[lang]}</p></div>
+    </div>
+    <form data-lead-form="contact" data-endpoint={site.formEndpoint} data-msg={msg} class="space-y-3" novalidate>
+      <label class="block text-sm font-bold">{fm.first}<input name="name" required class="field mt-1 font-normal" /></label>
+      <label class="block text-sm font-bold">{fm.email}<input name="email" type="email" required class="field mt-1 font-normal" /></label>
+      <label class="block text-sm font-bold">{fm.phone}<input name="phone" type="tel" class="field mt-1 font-normal" /></label>
+      <label class="block text-sm font-bold">{c.message}<textarea name="message" rows="4" required class="field mt-1 font-normal"></textarea></label>
+      <input name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+      <button type="submit" class="btn btn-primary">{c.send}</button>
+      <p data-status role="status"></p>
+    </form>
+  </section>
+</Layout>
+<script>import '../scripts/forms.js';</script>

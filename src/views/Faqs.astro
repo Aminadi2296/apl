@@ -1,0 +1,13 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FaqList from '../components/FaqList.astro';
+import { t, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang), f = u.faqs;
+const [title, desc] = u.seo.faqs;
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: f.items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }];
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('faqs')} jsonLd={jsonLd}>
+  <section class="bg-navy py-14 text-white"><div class="mx-auto max-w-3xl px-4"><h1 class="text-4xl font-extrabold md:text-5xl">{f.title}</h1><p class="mt-2 text-lg text-white/80">{f.sub}</p></div></section>
+  <section class="mx-auto max-w-3xl px-4 py-14"><FaqList items={f.items} /></section>
+</Layout>

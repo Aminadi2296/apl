@@ -1,0 +1,11 @@
+---
+import { t, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const items = t(lang).marquee;
+const loop = [...items, ...items, ...items, ...items];
+---
+<div class="marquee overflow-hidden bg-brand py-3 text-navy" aria-hidden="true">
+  <div class="marquee-track font-bold">
+    {[0, 1].map(() => <div class="flex shrink-0">{loop.map((i) => <span class="mx-6 whitespace-nowrap">★ {i}</span>)}</div>)}
+  </div>
+</div>

@@ -1,0 +1,32 @@
+---
+import { site } from '../data/site';
+import { t, routes, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const h = t(lang).hero;
+---
+<section class="relative isolate overflow-hidden bg-navy text-white">
+  <video class="absolute inset-0 -z-20 h-full w-full object-cover" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+    <source src={site.heroVideo} type="video/webm" />
+  </video>
+  <div class="absolute inset-0 -z-10 bg-[#16232A]/70"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#16232A]/90 via-[#16232A]/70 to-[#16232A]/35"></div>
+  <div class="mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-center px-4 py-20">
+    <h1 class="max-w-4xl text-5xl font-extrabold leading-[1.05] md:text-7xl">
+      {h.lead}
+      <span class="rotator relative mt-2 block h-[1.15em] text-brand" id="rotator" aria-live="off">
+        {h.rotate.map((p, i) => <span class:list={[i === 0 && 'on']}>{p}</span>)}
+      </span>
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-white/85">{h.sub}</p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href={routes.inventory[lang]} class="btn btn-primary">{h.cta1}</a>
+      <a href={routes.apply[lang]} class="btn btn-ghost hover:bg-white hover:text-navy">{h.cta2}</a>
+    </div>
+  </div>
+</section>
+<script>
+  const spans = document.querySelectorAll<HTMLElement>('#rotator span');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let i = 0;
+  if (!still && spans.length > 1) setInterval(() => { spans[i].classList.remove('on'); i = (i + 1) % spans.length; spans[i].classList.add('on'); }, 2800);
+</script>

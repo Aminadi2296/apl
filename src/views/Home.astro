@@ -1,0 +1,52 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Marquee from '../components/Marquee.astro';
+import FlagCarousel from '../components/FlagCarousel.astro';
+import CarCard from '../components/CarCard.astro';
+import cars from '../data/cars.json';
+import { t, routes, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang);
+const [title, desc] = u.seo.home;
+const featured = cars.filter((c) => c.featured).slice(0, 4);
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('home')}>
+  <Hero lang={lang} />
+  <Marquee lang={lang} />
+  <section class="mx-auto max-w-7xl px-4 py-16">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <h2 class="text-3xl font-extrabold md:text-4xl">{u.featured.title}</h2>
+      <a class="btn btn-dark" href={routes.inventory[lang]}>{u.featured.all}</a>
+    </div>
+    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {featured.map((car) => <CarCard car={car} lang={lang} />)}
+    </div>
+  </section>
+  <FlagCarousel lang={lang} />
+  <section class="mx-auto max-w-7xl px-4 py-16">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{u.steps.title}</h2>
+    <ol class="mt-8 grid gap-6 md:grid-cols-4">
+      {u.steps.items.map(([h, p], i) => (
+        <li class="border-t-4 border-brand pt-4">
+          <span class="font-display text-4xl font-extrabold text-brand">{i + 1}</span>
+          <h3 class="mt-1 text-xl font-bold">{h}</h3>
+          <p class="mt-1 text-navy/75">{p}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+  <section class="bg-navy py-16 text-white">
+    <div class="mx-auto max-w-7xl px-4">
+      <h2 class="text-3xl font-extrabold md:text-4xl">{u.why.title}</h2>
+      <div class="mt-8 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        {u.why.items.map(([h, p]) => <div><h3 class="text-xl font-bold text-brand">{h}</h3><p class="mt-2 text-white/80">{p}</p></div>)}
+      </div>
+    </div>
+  </section>
+  <section class="bg-brand py-14 text-center text-navy">
+    <h2 class="text-3xl font-extrabold md:text-4xl">{u.cta.title}</h2>
+    <p class="mt-2">{u.cta.sub}</p>
+    <a class="btn btn-dark mt-6" href={routes.apply[lang]}>{u.cta.btn}</a>
+  </section>
+</Layout>

@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FaqList from '../components/FaqList.astro';
+import { site } from '../data/site';
+import { t, routes, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang), f = u.fin, fm = u.form;
+const [title, desc] = u.seo.financing;
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: u.faqs.items.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }];
+const msg = JSON.stringify({ ok: fm.ok, test: fm.test, err: fm.err, sending: fm.sending });
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('financing')} jsonLd={jsonLd}>
+  <section class="bg-navy text-white">
+    <div class="mx-auto grid max-w-7xl gap-10 px-4 py-16 lg:grid-cols-2 lg:items-center">
+      <div>
+        <p class="font-bold text-brand">{f.eyebrow}</p>
+        <h1 class="mt-2 text-4xl font-extrabold md:text-6xl">{f.title}</h1>
+        <p class="mt-4 max-w-xl text-lg text-white/85">{f.sub}</p>
+        <ul class="mt-6 space-y-2">{f.bullets.map((b) => <li class="flex gap-2"><span class="text-brand">✓</span>{b}</li>)}</ul>
+      </div>
+      <form data-lead-form="prequal" data-endpoint={site.formEndpoint} data-msg={msg} class="rounded-2xl bg-white p-6 text-navy shadow-xl" novalidate>
+        <h2 class="text-2xl font-extrabold">{f.formTitle}</h2>
+        <p class="text-navy/70">{f.formSub}</p>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <label class="block text-sm font-bold">{fm.first}<input name="firstName" required autocomplete="given-name" class="field mt-1 font-normal" /></label>
+          <label class="block text-sm font-bold">{fm.last}<input name="lastName" required autocomplete="family-name" class="field mt-1 font-normal" /></label>
+          <label class="block text-sm font-bold">{fm.email}<input name="email" type="email" required autocomplete="email" class="field mt-1 font-normal" /></label>
+          <label class="block text-sm font-bold">{fm.phone}<input name="phone" type="tel" required autocomplete="tel" class="field mt-1 font-normal" /></label>
+        </div>
+        <input name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+        <label class="mt-4 flex gap-2 text-xs text-navy/75"><input type="checkbox" name="smsConsent" required class="mt-0.5" /><span>{fm.consent}</span></label>
+        <button type="submit" class="btn btn-primary mt-4 w-full">{f.send}</button>
+        <p data-status role="status" class="mt-3"></p>
+        <p class="mt-3 text-xs text-navy/60">{f.fine}</p>
+        <a href={routes.apply[lang]} class="mt-3 block text-sm font-bold text-brand-dark hover:underline">{f.applyLink}</a>
+      </form>
+    </div>
+  </section>
+  <section class="mx-auto max-w-7xl px-4 py-16">
+    <h2 class="text-3xl font-extrabold">{u.steps.title}</h2>
+    <ol class="mt-8 grid gap-6 md:grid-cols-4">
+      {u.steps.items.map(([h, p], i) => <li class="border-t-4 border-brand pt-4"><span class="font-display text-4xl font-extrabold text-brand">{i + 1}</span><h3 class="mt-1 text-xl font-bold">{h}</h3><p class="mt-1 text-navy/75">{p}</p></li>)}
+    </ol>
+  </section>
+  <section class="mx-auto max-w-3xl px-4 pb-20">
+    <h2 class="mb-6 text-3xl font-extrabold">{f.faqTitle}</h2>
+    <FaqList items={u.faqs.items} />
+  </section>
+</Layout>
+<script>import '../scripts/forms.js';</script>

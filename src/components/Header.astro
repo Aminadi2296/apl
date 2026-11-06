@@ -1,0 +1,51 @@
+---
+import { site } from '../data/site';
+import { t, routes, type Lang } from '../i18n/ui';
+const { lang, paths } = Astro.props as { lang: Lang; paths: { es: string; en: string } };
+const n = t(lang).nav;
+const other: Lang = lang === 'es' ? 'en' : 'es';
+const links = [['home', n.home], ['inventory', n.inventory], ['about', n.about], ['contact', n.contact], ['faqs', n.faqs]] as const;
+const cur = Astro.url.pathname;
+const active = (p: string) => (p === '/' || p === '/en/' ? cur === p : cur.startsWith(p));
+---
+<header class="sticky top-0 z-40 bg-[#16232A] text-white shadow-sm">
+  <div class="bg-[#0f1b20] text-white text-sm">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
+      <p class="hidden sm:block">{site.hours[lang]} · {site.address.street}, {site.address.city}</p>
+      <a class="sm:hidden font-bold" href={`tel:${site.phoneHref}`}>{site.phone}</a>
+      <a href={paths[other]} hreflang={other} class="rounded border border-white/40 px-2 py-0.5 font-bold hover:bg-brand hover:text-navy">
+        {other.toUpperCase()}
+      </a>
+    </div>
+  </div>
+  <nav class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3" aria-label="Main">
+    <a href={routes.home[lang]} class="flex items-center" aria-label="Autos para Latinos home">
+      <img src="/logo-white.svg" alt="Autos para Latinos" class="h-10 w-auto md:h-12" />
+    </a>
+    <ul class="hidden items-center gap-7 font-bold lg:flex">
+      {links.slice(0, 2).map(([k, label]) => <li><a href={routes[k][lang]} class:list={['hover:text-brand', active(routes[k][lang]) && 'text-brand']}>{label}</a></li>)}
+      <li class="group relative">
+        <a href={routes.financing[lang]} class:list={['hover:text-brand', cur.includes('financ') && 'text-brand']}>{n.financing} ▾</a>
+        <ul class="invisible absolute left-0 top-full w-60 rounded-lg bg-white p-2 opacity-0 shadow-xl transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+          <li><a class="block rounded p-2 hover:bg-mist" href={routes.financing[lang]}>{n.summary}</a></li>
+          <li><a class="block rounded p-2 hover:bg-mist" href={routes.apply[lang]}>{n.apply}</a></li>
+        </ul>
+      </li>
+      {links.slice(2).map(([k, label]) => <li><a href={routes[k][lang]} class:list={['hover:text-brand', active(routes[k][lang]) && 'text-brand']}>{label}</a></li>)}
+    </ul>
+    <div class="flex items-center gap-3">
+      <a class="btn btn-primary hidden sm:inline-flex" href={routes.apply[lang]}>{n.cta}</a>
+      <button id="menu-btn" class="rounded border-2 border-white px-3 py-1.5 font-bold text-white lg:hidden" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="hidden border-t border-white/10 bg-[#16232A] px-4 pb-4 text-white lg:hidden">
+    <ul class="flex flex-col font-bold">
+      {[...links.slice(0, 2), ['financing', n.financing], ['apply', n.apply], ...links.slice(2)].map(([k, label]) => <li><a class="block py-3" href={routes[k as keyof typeof routes][lang]}>{label}</a></li>)}
+    </ul>
+    <a class="btn btn-primary mt-2 w-full" href={routes.apply[lang]}>{n.cta}</a>
+  </div>
+</header>
+<script>
+  const b = document.getElementById('menu-btn')!, m = document.getElementById('mobile-menu')!;
+  b.addEventListener('click', () => { const o = m.classList.toggle('hidden') === false; b.setAttribute('aria-expanded', String(o)); });
+</script>

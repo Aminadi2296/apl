@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../data/site';
+import { t, pathsOf, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang), a = u.apply, fm = u.form;
+const [title, desc] = u.seo.apply;
+const i = lang === 'es' ? 0 : 1;
+const msg = JSON.stringify({ ok: fm.ok, test: fm.test, err: fm.err, sending: fm.sending });
+// [name, [es, en], type, required, options?]
+const sections: [string, any[]][] = [
+  [a.sections[0], [['licenseId', ['Licencia de conducir', 'Driver license ID'], 'text', true], ['firstName', [fm.first, fm.first], 'text', true], ['lastName', [fm.last, fm.last], 'text', true], ['phone', [fm.phone, fm.phone], 'tel', true], ['email', [fm.email, fm.email], 'email', true], ['dob', ['Fecha de nacimiento', 'Date of birth'], 'date', true], ['ssnItin', ['SSN o ITIN', 'SSN or ITIN'], 'password', true]]],
+  [a.sections[1], [['address', ['Dirección', 'Address'], 'text', true], ['state', ['Estado', 'State'], 'select', true, ['CA','AZ','NV','TX','FL','NY','GA','NC','OR','WA']], ['city', ['Ciudad', 'City'], 'text', true], ['zip', ['Código postal', 'Zip code'], 'text', true], ['timeAtAddress', ['¿Cuánto tiempo vives aquí?', 'How long at this address?'], 'text', true]]],
+  [a.sections[2], [['employer', ['Empleador actual', 'Present employer'], 'text', true], ['timeAtJob', ['¿Cuánto tiempo trabajas ahí?', 'How long at this job?'], 'text', true], ['employerPhone', ['Teléfono del empleador', 'Employer phone'], 'tel', false], ['occupation', ['Ocupación', 'Occupation'], 'text', true], ['workAddress', ['Dirección del trabajo', 'Work address'], 'text', false], ['selfEmployed', ['Si trabajas por tu cuenta, ¿a qué te dedicas?', 'If self-employed, what do you do?'], 'text', false], ['payPeriod', ['Te pagan', 'You get paid'], 'select', true, lang === 'es' ? ['Semanal', 'Quincenal', 'Mensual'] : ['Weekly', 'Bi-weekly', 'Monthly']], ['income', ['Ingreso bruto mensual ($)', 'Gross monthly income ($)'], 'number', true], ['downPayment', ['Pago inicial ($)', 'Down payment ($)'], 'number', false]]],
+  [a.sections[3], [['authorize', ['Autorizo a Autos para Latinos a revisar mi crédito para obtener una aprobación de préstamo.', 'I authorize Autos para Latinos to check my credit to get a vehicle loan approval.'], 'select', true, lang === 'es' ? ['Sí', 'No'] : ['Yes', 'No']], ['initials', ['Iniciales (firma)', 'Signature (initials)'], 'text', true]]],
+  [a.sections[4], [['tradeMake', ['Marca', 'Make'], 'text', false], ['tradeModel', ['Modelo', 'Model'], 'text', false], ['tradeYear', ['Año', 'Year'], 'number', false], ['tradeMiles', ['Millas', 'Miles'], 'number', false], ['tradeVin', ['VIN', 'VIN'], 'text', false], ['tradeBalance', ['Saldo pendiente ($)', 'Balance due ($)'], 'number', false], ['notes', ['Notas', 'Notes'], 'text', false]]],
+];
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('apply')}>
+  <section class="bg-navy py-12 text-white">
+    <div class="mx-auto max-w-4xl px-4"><h1 class="text-4xl font-extrabold md:text-5xl">{a.title}</h1><p class="mt-2 text-white/80">{a.sub}</p></div>
+  </section>
+  <form data-lead-form="apply" data-endpoint={site.formEndpoint} data-msg={msg} class="mx-auto max-w-4xl px-4 py-10" novalidate>
+    {sections.map(([heading, fields]) => (
+      <fieldset class="mb-8 rounded-xl border border-navy/10 p-5">
+        <legend class="px-2 text-xl font-extrabold">{heading}</legend>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {fields.map(([name, label, type, req, opts]) => (
+            <label class="block text-sm font-bold">{label[i]}{req && ' *'}
+              {type === 'select'
+                ? <select name={name} required={req} class="field mt-1 font-normal"><option value="">--</option>{opts.map((o: string) => <option>{o}</option>)}</select>
+                : <input name={name} type={type} required={req} autocomplete={type === 'password' ? 'off' : undefined} class="field mt-1 font-normal" />}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    ))}
+    <input name="company" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+    <label class="flex gap-2 text-xs text-navy/75"><input type="checkbox" name="smsConsent" required class="mt-0.5" /><span>{fm.consent}</span></label>
+    <button type="submit" class="btn btn-primary mt-6 w-full sm:w-auto">{a.send}</button>
+    <p data-status role="status" class="mt-3"></p>
+    <p class="mt-4 text-sm text-navy/60">{a.secure}</p>
+  </form>
+</Layout>
+<script>import '../scripts/forms.js';</script>

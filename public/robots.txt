@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://autosparalatinos.com/sitemap-index.xml

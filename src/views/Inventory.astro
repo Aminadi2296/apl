@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CarCard from '../components/CarCard.astro';
+import cars from '../data/cars.json';
+import { t, pathsOf, money, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang);
+const [title, desc] = u.seo.inventory;
+const makes = [...new Set(cars.map((c) => c.make))].sort();
+const jsonLd = [{ '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: cars.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: `${c.year} ${c.make} ${c.model}` })) }];
+---
+<Layout lang={lang} title={title} description={desc} paths={pathsOf('inventory')} jsonLd={jsonLd}>
+  <section class="bg-navy py-12 text-white">
+    <div class="mx-auto max-w-7xl px-4"><h1 class="text-4xl font-extrabold md:text-5xl">{u.inv.title}</h1><p class="mt-2 text-white/80">{u.inv.sub}</p></div>
+  </section>
+  <section class="mx-auto max-w-7xl px-4 py-10">
+    <form id="filters" class="grid gap-3 rounded-xl bg-mist p-4 sm:grid-cols-4" onsubmit="return false">
+      <input id="f-q" class="field" type="search" placeholder={u.inv.search} aria-label={u.inv.search} />
+      <select id="f-make" class="field" aria-label={u.inv.make}>
+        <option value="">{u.inv.make}: {u.inv.any}</option>
+        {makes.map((m) => <option value={m.toLowerCase()}>{m}</option>)}
+      </select>
+      <select id="f-price" class="field" aria-label={u.inv.maxPrice}>
+        <option value="">{u.inv.maxPrice}: {u.inv.any}</option>
+        {[10000, 15000, 20000, 30000].map((p) => <option value={p}>{u.inv.under} {money(p)}</option>)}
+      </select>
+      <button type="button" id="f-clear" class="btn btn-dark">{u.inv.clear}</button>
+    </form>
+    <p class="mt-6 font-bold"><span id="count">{cars.length}</span> {u.inv.results}</p>
+    <div id="grid" class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {cars.map((car) => <CarCard car={car} lang={lang} />)}
+    </div>
+    <p id="empty" class="mt-8 hidden text-lg">{u.inv.none}</p>
+  </section>
+</Layout>
+<script>
+  // Los filtros leen los data-* de cada tarjeta. Cuando el inventario venga de un CMS, esta lógica se mantiene igual.
+  const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+  const cards = [...document.querySelectorAll<HTMLElement>('.car-card')];
+  function apply() {
+    const q = $('f-q').value.trim().toLowerCase(), make = $('f-make').value, max = Number($('f-price').value) || Infinity;
+    let n = 0;
+    cards.forEach((c) => {
+      const ok = (!q || (c.dataset.make + ' ' + c.dataset.model).includes(q)) && (!make || c.dataset.make === make) && Number(c.dataset.price) <= max;
+      c.classList.toggle('hidden', !ok); if (ok) n++;
+    });
+    $('count').textContent = String(n);
+    $('empty').classList.toggle('hidden', n > 0);
+  }
+  ['f-q', 'f-make', 'f-price'].forEach((id) => $(id).addEventListener('input', apply));
+  $('f-clear').addEventListener('click', () => { ['f-q', 'f-make', 'f-price'].forEach((id) => ($(id).value = '')); apply(); });
+  const f = new URLSearchParams(location.search).get('filter');
+  if (f === 'under-20k') $('f-price').value = '20000'; if (f === 'under-10k') $('f-price').value = '10000';
+  apply();
+</script>
