@@ -16,7 +16,7 @@ const msg = JSON.stringify({ ok: fm.ok, test: fm.test, err: fm.err, sending: fm.
       <div><h2 class="font-bold text-brand-dark">{c.mail}</h2><a href={`mailto:${site.email}`}>{site.email}</a></div>
       <div><h2 class="font-bold text-brand-dark">{c.hours}</h2><p>{site.hours[lang]}</p></div>
     </div>
-    <form data-lead-form="contact" data-endpoint={site.formEndpoint} data-msg={msg} class="space-y-3" novalidate>
+    <form data-lead-form="contact" data-endpoint={site.leadEndpoint} data-msg={msg} class="space-y-3" novalidate>
       <label class="block text-sm font-bold">{fm.first}<input name="name" required class="field mt-1 font-normal" /></label>
       <label class="block text-sm font-bold">{fm.email}<input name="email" type="email" required class="field mt-1 font-normal" /></label>
       <label class="block text-sm font-bold">{fm.phone}<input name="phone" type="tel" class="field mt-1 font-normal" /></label>

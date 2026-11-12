@@ -9,7 +9,10 @@ export const site = {
   hours: { es: 'Lun–Sáb 9AM–8PM · Dom 11AM–6PM', en: 'Mon–Sat 9AM–8PM · Sun 11AM–6PM' },
   social: { facebook: '#', instagram: '#', tiktok: '#' },
   heroVideo: '/video/hero.webm',
+  // Prequal y aplicar siguen en MODO PRUEBA hasta definir con el cliente cómo funcionan.
   formEndpoint: import.meta.env.PUBLIC_FORM_ENDPOINT ?? '',
+  // Endpoint propio (src/pages/api/lead.ts) que envía correos con Resend.
+  leadEndpoint: '/api/lead/',
 };
 
 export const flags = [
