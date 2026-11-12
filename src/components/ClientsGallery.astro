@@ -1,0 +1,66 @@
+---
+import { routes, t, type Lang } from '../i18n/ui';
+const { lang } = Astro.props as { lang: Lang };
+const u = t(lang).clients;
+const photos = Array.from({ length: 10 }, (_, i) => `/clients/client${i + 1}.webp`);
+// La segunda fila usa el orden inverso para que no coincidan las mismas fotos
+const rows = [photos, [...photos].reverse()];
+---
+<section class="clients overflow-hidden py-20">
+  <div class="mx-auto max-w-7xl px-4 text-center">
+    <p class="reveal font-bold text-brand">{u.eyebrow}</p>
+    <h2 class="reveal mt-3 text-4xl font-extrabold md:text-5xl" style="--d: 100ms">{u.title}</h2>
+    <p class="reveal mx-auto mt-4 max-w-2xl text-lg text-navy/75" style="--d: 200ms">{u.sub}</p>
+  </div>
+
+  <div class="mt-12 space-y-5">
+    {rows.map((row, r) => (
+      <div class={`reveal reveal-${r === 0 ? 'left' : 'right'} marquee clients-mask overflow-hidden`} style={`--d: ${300 + r * 150}ms`}>
+        <div class={`marquee-track clients-track ${r === 1 ? 'reverse' : ''}`}>
+          {[0, 1].map((n) => (
+            <ul class="flex shrink-0 gap-5 pr-5" aria-hidden={n === 1 || r === 1 ? 'true' : undefined}>
+              {row.map((src) => (
+                <li class="client-card group relative h-48 w-64 shrink-0 overflow-hidden rounded-2xl shadow-lg md:h-60 md:w-80">
+                  <img
+                    src={src}
+                    alt={n === 0 && r === 0 ? u.alt : ''}
+                    width="320"
+                    height="240"
+                    loading="lazy"
+                    decoding="async"
+                    class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  />
+                  <span class="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
+                </li>
+              ))}
+            </ul>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="reveal mt-12 text-center" style="--d: 500ms">
+    <a class="btn btn-primary" href={routes.apply[lang]}>{u.btn}</a>
+  </div>
+</section>
+
+<script>
+  const items = document.querySelectorAll<HTMLElement>('.clients .reveal');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach((el) => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.15 },
+    );
+    items.forEach((el) => io.observe(el));
+  }
+</script>

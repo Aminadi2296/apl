@@ -4,6 +4,7 @@ import Hero from '../components/Hero.astro';
 import Marquee from '../components/Marquee.astro';
 import FlagCarousel from '../components/FlagCarousel.astro';
 import CarCard from '../components/CarCard.astro';
+import ClientsGallery from '../components/ClientsGallery.astro';
 import cars from '../data/cars.json';
 import { t, routes, pathsOf, type Lang } from '../i18n/ui';
 const { lang } = Astro.props as { lang: Lang };
@@ -64,6 +65,7 @@ const featured = cars.filter((c) => c.featured).slice(0, 4);
       </div>
     </div>
   </section>
+  <ClientsGallery lang={lang} />
   <section class="bg-brand py-14 text-center text-navy">
     <h2 class="text-3xl font-extrabold md:text-4xl">{u.cta.title}</h2>
     <p class="mt-2">{u.cta.sub}</p>
